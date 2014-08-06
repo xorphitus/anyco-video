@@ -3,13 +3,20 @@
               [io.pedestal.http.route :as route]
               [io.pedestal.http.body-params :as body-params]
               [io.pedestal.http.route.definition :refer [defroutes]]
-              [ring.util.response :as ring-resp]))
+              [ring.util.response :as ring-resp]
+              [hiccup.core :as hiccup]))
 
-(defn about-page
+(defn comment-page
   [request]
-  (ring-resp/response (format "Clojure %s - served from %s"
-                              (clojure-version)
-                              (route/url-for ::about-page))))
+  (ring-resp/response (hiccup/html [:html
+                                    [:body
+                                     [:form
+                                      [:div
+                                       [:label "comment"]]
+                                      [:div
+                                       [:textarea]]
+                                      [:div
+                                       [:button "post"]]]]])))
 
 (defn home-page
   [request]
@@ -19,7 +26,7 @@
   [[["/" {:get home-page}
      ;; Set default interceptors for /about and any other paths under /
      ^:interceptors [(body-params/body-params) bootstrap/html-body]
-     ["/about" {:get about-page}]]]])
+     ["/comment" {:get comment-page}]]]])
 
 ;; Consumed by anyco-video.server/create-server
 ;; See bootstrap/default-interceptors for additional options you can configure
