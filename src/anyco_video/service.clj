@@ -9,14 +9,20 @@
 (defn comment-page
   [request]
   (ring-resp/response (hiccup/html [:html
+                                    [:head
+                                     [:script {:src "//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"}]
+                                     [:script {:src "/comment.js" :defer true}]]
                                     [:body
-                                     [:form
-                                      [:div
-                                       [:label "comment"]]
-                                      [:div
-                                       [:textarea]]
-                                      [:div
-                                       [:button "post"]]]]])))
+                                     [:div
+                                      [:label "comment"]]
+                                     [:div
+                                      [:textarea#comment]]
+                                     [:div
+                                      [:button#postBtn "post"]]]])))
+
+(defn comment-creation
+  [request]
+  (ring-resp/response "OK"))
 
 (defn home-page
   [request]
@@ -26,7 +32,8 @@
   [[["/" {:get home-page}
      ;; Set default interceptors for /about and any other paths under /
      ^:interceptors [(body-params/body-params) bootstrap/html-body]
-     ["/comment" {:get comment-page}]]]])
+     ["/comment" {:get comment-page}]
+     ["/comment" {:post comment-creation}]]]])
 
 ;; Consumed by anyco-video.server/create-server
 ;; See bootstrap/default-interceptors for additional options you can configure
